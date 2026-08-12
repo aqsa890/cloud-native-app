@@ -1,0 +1,32 @@
+.git/
+.gitignore
+.dockerignore
+.github/
+README.md
+
+# Dependencies & Build Output
+node_modules/
+dist/
+build/
+out/
+bin/
+
+# Python Virtual Environments & Cache
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# Environment Secrets
+.env
+.env.*
+!.env.example
+
+# Development Logs & IDEs
+logs/
+*.log
+.vscode/
+.idea/
+.DS_Store
