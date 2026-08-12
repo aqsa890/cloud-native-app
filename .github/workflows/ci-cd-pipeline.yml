@@ -20,4 +20,4 @@ jobs:
   linting:
     name: Code Linting
     needs: [secret-scanning]
-    uses: ./.github/workflows/lint.yml
+    uses: ./.github/workflows/linting.yml
