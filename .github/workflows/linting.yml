@@ -24,7 +24,7 @@ jobs:
       - name: Install and Run Pylint
         run: |
           pip install pylint
-          pylint app --disable=C0111,C0103,W0613
+          PYTHONPATH=. pylint app --errors-only
         working-directory: ./services/product-service
 
   javascript-linting:
