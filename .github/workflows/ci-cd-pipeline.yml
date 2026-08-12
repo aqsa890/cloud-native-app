@@ -19,7 +19,7 @@ jobs:
 
   linting:
     name: Code Linting
-    needs: [secret-scanning]
+    needs: [secret-scan]
     uses: ./.github/workflows/linting.yml
 
   dependency-sca:
