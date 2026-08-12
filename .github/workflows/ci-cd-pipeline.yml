@@ -16,3 +16,8 @@ jobs:
     name: Secret Scan
     uses: ./.github/workflows/secret-scan.yml
     secrets: inherit
+
+  linting:
+    name: Code Linting
+    needs: [secret-scanning]
+    uses: ./.github/workflows/lint.yml
