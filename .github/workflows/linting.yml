@@ -29,9 +29,6 @@ jobs:
 
   javascript-linting:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
 
     strategy:
       fail-fast: false
