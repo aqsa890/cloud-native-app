@@ -1,16 +1,20 @@
 name: Dependency Scan
 
 on:
-  push
+  workflow_call:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  javascript-dependency_sca:
-  runs-on: ubuntu-latest
+  javascript-dependency-sca:
+    runs-on: ubuntu-latest
 
-  strategy:
-    fail-test: false
-    matrix:
-      include:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
           - folder: frontend
             name: frontend
           - folder: gateway
@@ -23,57 +27,63 @@ jobs:
         working-directory: ${{ matrix.folder }}
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v7
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js 
-      uses: actions/setup-node@v5
-      with:
-      node-version: 22
-      cache: npm
-      cache-dependency-path: ${{ matrix.folder }}/package-lock.json
+      - name: Setup Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.folder }}/package-lock.json
 
-    - name: Install Dependencies
-      run: npm i
+      - name: Install Dependencies
+        run: npm ci
 
-    - name: Upload Dependency Report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: npm-security-report-${{ matrix.name }}
-        path: ${{ matrix.folder }}/npm-audit-report.json
-        retention-days: 5
+      - name: Run NPM Audit and Generate Report
+        run: npm audit --json > npm-audit-report.json || true
+
+      - name: Upload Dependency Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-security-report-${{ matrix.name }}
+          path: ${{ matrix.folder }}/npm-audit-report.json
+          retention-days: 5
 
   go-dependency-sca:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout Code
-      uses: actions/setup-go@v5
-      with:
-        go-version: "1.25"
-        cache: true
-        cache-dependency-path: services/auth-service/go.sum
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Install govulncheck
-      run: |
-      go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+          cache-dependency-path: services/auth-service/go.sum
 
-    - name: Run Go SCA
-      working-directory: services/auth-service
-      run: govulncheck ./...
+      - name: Install govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Run Go SCA
+        working-directory: services/auth-service
+        run: govulncheck ./...
 
   python-dependency-sca:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
+    steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           cache: pip
           cache-dependency-path: services/product-service/requirements.txt
 
@@ -89,8 +99,3 @@ jobs:
       - name: Run Python SCA
         working-directory: services/product-service
         run: pip-audit -r requirements.txt
-
-
-      
-      
-      
