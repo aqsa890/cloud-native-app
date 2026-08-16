@@ -102,8 +102,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube Server') {
-                    sh "${tool('SonarQube Server')}/bin/sonar-scanner"
+                withSonarQubeEnv('sonarqube-server') {
+                    sh "${tool('sonarqube-server')}/bin/sonar-scanner"
                 }
             }
         }
