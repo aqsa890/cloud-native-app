@@ -10,8 +10,9 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt ./
+# hadolint ignore=DL3013
 RUN pip install --no-cache-dir --default-timeout=100 --retries=5 -r requirements.txt && \
-    pip install --no-cache-dir --upgrade msgpack>=1.2.1 setuptools>=83.0.0 && \
+    pip install --no-cache-dir --upgrade 'msgpack>=1.2.1' 'setuptools>=83.0.0' && \
     pip uninstall -y pip setuptools 2>/dev/null; \
     rm -rf /opt/venv/lib/python*/site-packages/pip* \
            /opt/venv/lib/python*/site-packages/setuptools* \
