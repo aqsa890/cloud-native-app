@@ -184,5 +184,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Hadolint'){
+            steps{
+                dir('services/auth-service'){
+                    sh '''
+                        docker run --rm -i hadolint/hadolint < Dockerfile
+                    '''
+                }
+                dir('services/payment-service'){
+                    sh '''
+                        docker run --rm -i hadolint/hadolint < Dockerfile
+                    '''
+                }
+                dir('services/product-service'){
+                    sh '''
+                        docker run --rm -i hadolint/hadolint < Dockerfile
+                    '''
+                }
+                dir('gateway'){
+                    sh '''
+                        docker run --rm -i hadolint/hadolint < Dockerfile
+                    '''
+                }
+                dir('frontend'){
+                    sh '''
+                        docker run --rm -i hadolint/hadolint < Dockerfile
+                    '''
+                }
+            }
+        }
     }
 }
