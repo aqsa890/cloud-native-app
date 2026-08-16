@@ -257,18 +257,18 @@ pipeline {
                     )
                 ]){
                     sh '''
-                        docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}
-                        docker image tag cloud-app-frontend:v1.0.0 ${env.dockerHubUser}/cloud-app-frontend:v1.0.0
-                        docker image tag cloud-app-gateway:v1.0.0 ${env.dockerHubUser}/cloud-app-gateway:v1.0.0
-                        docker image tag cloud-app-product-service:v1.0.0 ${env.dockerHubUser}/cloud-app-product-service:v1.0.0
-                        docker image tag cloud-app-payment-service:v1.0.0 ${env.dockerHubUser}/cloud-app-payment-service:v1.0.0
-                        docker image tag cloud-app-auth-service:v1.0.0 ${env.dockerHubUser}/cloud-app-auth-service:v1.0.0
+                        docker login -u $dockerHubUser -p $dockerHubPass
+                        docker image tag cloud-app-frontend:v1.0.0 $dockerHubUser/cloud-app-frontend:v1.0.0
+                        docker image tag cloud-app-gateway:v1.0.0 $dockerHubUser/cloud-app-gateway:v1.0.0
+                        docker image tag cloud-app-product-service:v1.0.0 $dockerHubUser/cloud-app-product-service:v1.0.0
+                        docker image tag cloud-app-payment-service:v1.0.0 $dockerHubUser/cloud-app-payment-service:v1.0.0
+                        docker image tag cloud-app-auth-service:v1.0.0 $dockerHubUser/cloud-app-auth-service:v1.0.0
 
-                        docker push ${env.dockerHubUser}/cloud-app-frontend:v1.0.0
-                        docker push ${env.dockerHubUser}/cloud-app-gateway:v1.0.0
-                        docker push ${env.dockerHubUser}/cloud-app-product-service:v1.0.0
-                        docker push ${env.dockerHubUser}/cloud-app-payment-service:v1.0.0
-                        docker push ${env.dockerHubUser}/cloud-app-auth-service:v1.0.0
+                        docker push $dockerHubUser/cloud-app-frontend:v1.0.0
+                        docker push $dockerHubUser/cloud-app-gateway:v1.0.0
+                        docker push $dockerHubUser/cloud-app-product-service:v1.0.0
+                        docker push $dockerHubUser/cloud-app-payment-service:v1.0.0
+                        docker push $dockerHubUser/cloud-app-auth-service:v1.0.0
                     '''
                 }               
             }
