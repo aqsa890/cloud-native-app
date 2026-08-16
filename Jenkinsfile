@@ -147,8 +147,13 @@ pipeline {
                     steps {
                         dir('services/product-service') {
                             sh '''
-                                pip install pip-audit
-                                pip-audit -r requirements.txt
+                                python3 -m venv .venv-sca
+                                . .venv-sca/bin/activate
+
+                                python -m pip install --upgrade pip
+                                python -m pip install pip-audit
+
+                                pip-audit
                             '''
                         }
                     }
