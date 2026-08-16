@@ -150,7 +150,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: cloud-app:v1.0.0
+    image: cloud-app-frontend:v1.0.0
     container_name: frontend-app
     restart: always
     ports:
