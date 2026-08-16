@@ -100,23 +100,19 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
+        stage('SonarQube Analysis') {
             steps {
-                echo 'Running SonarQube analysis...'
+                withSonarQubeEnv('SonarQube Server') {
+                    sh "${tool('SonarQube Server')}/bin/sonar-scanner"
+                }
+            }
+        }
 
-                withSonarQubeEnv('SonarQube') {
-                withCredentials([
-                string(
-                    credentialsId: 'sonarqubeCreds',
-                    variable: 'SONAR_TOKEN'
-                )
-            ]) {
-                sh '''
-                    sonar-scanner \
-                        -Dsonar.token=$SONAR_TOKEN \
-                        -Dsonar.host.url=$SONAR_HOST_URL
-                '''
-                    }
+        // Quality Gate — waits for SonarQube webhook to report pass/fail
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
