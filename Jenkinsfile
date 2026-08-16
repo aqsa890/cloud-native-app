@@ -138,10 +138,12 @@ pipeline {
                             catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                                 sh '''
                                     go install golang.org/x/vuln/cmd/govulncheck@latest
+                                    export PATH=$PATH:$(go env GOPATH)/bin
                                     govulncheck -json ./... > govulncheck-report.json
                                 '''
                             }
                             sh '''
+                                export PATH=$PATH:$(go env GOPATH)/bin
                                 echo "=== govulncheck summary ==="
                                 govulncheck ./... || true
                             '''
