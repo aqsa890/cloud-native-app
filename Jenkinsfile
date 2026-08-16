@@ -104,7 +104,7 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
 
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv {
                     withCredentials([
                         string(
                             credentialsId: 'sonar-token',
