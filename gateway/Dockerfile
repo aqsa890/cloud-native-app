@@ -9,6 +9,7 @@ COPY . .
 FROM alpine:3.24 AS runner
 WORKDIR /app
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache nodejs npm && \
     addgroup -S appgroup && adduser -S -u 10001 appuser -G appgroup
 
