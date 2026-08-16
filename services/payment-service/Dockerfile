@@ -11,11 +11,11 @@ FROM alpine:3.24 AS runner
 WORKDIR /app
 
 RUN apk add --no-cache nodejs && \
-    addgroup -S appgroup && adduser -S appuser -G appgroup
+    addgroup -S appgroup && adduser -S -u 10001 appuser -G appgroup
 
 COPY --from=builder /app/dist/index.js ./index.js
 
-USER appuser
+USER 10001
 
 EXPOSE 8003
 

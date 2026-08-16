@@ -28,7 +28,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     PATH="/opt/venv/bin:$PATH"
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
+RUN addgroup -S appgroup && adduser -S -u 10001 appuser -G appgroup && \
     pip uninstall -y setuptools pip 2>/dev/null; \
     rm -rf /usr/local/lib/python*/site-packages/setuptools* \
            /usr/local/lib/python*/site-packages/pkg_resources \
@@ -41,7 +41,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
 COPY --from=builder /opt/venv /opt/venv
 COPY --chown=appuser:appgroup app ./app
 
-USER appuser
+USER 10001
 
 EXPOSE 8002
 
