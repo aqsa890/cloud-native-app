@@ -245,6 +245,18 @@ pipeline {
             }
         }
 
+        stage('Trivy Security Scan') {
+            steps {
+                sh '''
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress cloud-app-auth-service:v1.0.0 || true
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress cloud-app-payment-service:v1.0.0 || true
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress cloud-app-product-service:v1.0.0 || true
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress cloud-app-gateway:v1.0.0 || true
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress cloud-app-frontend:v1.0.0 || true
+                '''
+            }
+        }
+
         stage('Pushing Docker Image to Docker Hub'){
             steps{
                 echo "Pushing image"
