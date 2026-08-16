@@ -285,5 +285,23 @@ pipeline {
                 }               
             }
         }
+
+        stage('Deployment Stage'){
+            steps{
+                sh '''
+                    # Ensure .env exists
+                    if [ ! -f .env ]; then
+                        cp .env.example .env
+                    fi
+
+                    # Deploy and recreate containers
+                    docker compose up -d --remove-orphans --force-recreate
+
+                    # Display running container status
+                    sleep 10
+                    docker compose ps
+                '''
+            }
+        }
     }
 }
