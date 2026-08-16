@@ -303,5 +303,39 @@ pipeline {
                 '''
             }
         }
+
+        post {
+
+        success {
+            script {
+                emailext(
+                    from: 'cutilicious1947@gmail.com',
+                    to: 'rkkhan0750@gmail.com',
+                    subject: "SUCCESS: Cloud Native App CI/CD Pipeline - Build #${BUILD_NUMBER}",
+                    body: """
+                            Hello,
+
+                            The Cloud Native App CI/CD pipeline has completed successfully.
+
+                            Build Details:
+                            ------------------------------
+                            Project     : Cloud Native App
+                            Build No.   : #${BUILD_NUMBER}
+                            Status      : SUCCESS
+                            Branch      : ${env.GIT_BRANCH}
+                            Commit      : ${env.GIT_COMMIT}
+                            Job         : ${env.JOB_NAME}
+                            Build URL   : ${env.BUILD_URL}
+
+                            The application was successfully built, tested, pushed to Docker Hub,
+                            and deployed successfully.
+
+                            Regards,
+                            Jenkins CI/CD Pipeline
+                            """.stripIndent()
+                     )
+                 }
+            }
+        }
     }
 }
