@@ -100,6 +100,61 @@ pipeline {
             }
         }
 
+        stage('SCA Check') {
+            parallel {
+                stage('Frontend') {
+                    steps {
+                        dir('frontend') {
+                            sh '''
+                                npm audit --json > npm-audit-report.json || true
+                            '''
+                        }
+                    }
+                }
+
+                stage('Gateway') {
+                    steps {
+                        dir('gateway') {
+                            sh '''
+                                npm audit --json > npm-audit-report.json || true
+                            '''
+                        }
+                    }
+                }
+
+                stage('Payment Service') {
+                    steps {
+                        dir('services/payment-service') {
+                            sh '''
+                                npm audit --json > npm-audit-report.json || true
+                            '''
+                        }
+                    }
+                }
+
+                stage('Auth Service') {
+                    steps {
+                        dir('services/auth-service') {
+                            sh '''
+                                go install golang.org/x/vuln/cmd/govulncheck@latest
+                                go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+                            '''
+                        }
+                    }
+                }
+
+                stage('Product Service') {
+                    steps {
+                        dir('services/product-service') {
+                            sh '''
+                                pip install pip-audit
+                                pip-audit -r requirements.txt
+                            '''
+                        }
+                    }
+                }
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
