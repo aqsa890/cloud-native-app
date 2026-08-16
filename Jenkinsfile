@@ -100,4 +100,25 @@ pipeline {
             }
         }
     }
+
+        stage('SonarQube Scan') {
+    steps {
+        echo 'Running SonarQube analysis...'
+
+        withSonarQubeEnv('SonarQube') {
+            withCredentials([
+                string(
+                    credentialsId: 'sonar-token',
+                    variable: 'SONAR_TOKEN'
+                )
+            ]) {
+                sh '''
+                    sonar-scanner \
+                        -Dsonar.token=$SONAR_TOKEN \
+                        -Dsonar.host.url=$SONAR_HOST_URL
+                '''
+            }
+        }
+    }
+}
 }
