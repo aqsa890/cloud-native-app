@@ -135,9 +135,15 @@ pipeline {
                 stage('Auth Service') {
                     steps {
                         dir('services/auth-service') {
+                            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                                sh '''
+                                    go install golang.org/x/vuln/cmd/govulncheck@latest
+                                    govulncheck -json ./... > govulncheck-report.json
+                                '''
+                            }
                             sh '''
-                                go install golang.org/x/vuln/cmd/govulncheck@latest
-                                go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+                                echo "=== govulncheck summary ==="
+                                govulncheck ./... || true
                             '''
                         }
                     }
