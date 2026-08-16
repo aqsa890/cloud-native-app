@@ -1,34 +1,11 @@
-name: Code Linting
+name: lint-check
 
 on:
   workflow_call:
-  push:
 
 jobs:
-  python-linting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        working-directory: ./services/product-service
-
-      - name: Install and Run Pylint
-        run: |
-          pip install pylint
-          PYTHONPATH=. pylint app --errors-only
-        working-directory: ./services/product-service
-
-  javascript-linting:
+  lint-javascript:
+    name: Lint - ${{ matrix.folder }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -58,9 +35,11 @@ jobs:
         run: npm i
 
       - name: Run ESLint
-        run: npm run lint --if-present
-        
-  go-linting:
+        run: npm run lint
+
+
+  lint-go:
+    name: Lint - Go
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -80,5 +59,28 @@ jobs:
       - name: Run Go Vet
         working-directory: services/auth-service
         run: go vet ./...
-    
-        
+
+
+  lint-python:
+    name: Lint - Python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: services/product-service/requirements.txt
+
+      - name: Install Dependencies
+        working-directory: services/product-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pylint
+        working-directory: services/product-service
+        run: PYTHONPATH=. pylint app/

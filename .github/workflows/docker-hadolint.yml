@@ -1,0 +1,22 @@
+name: hadolint-scan
+
+on:
+    workflow_call:
+
+jobs:
+    hadolint:
+        strategy:
+          fail-fast: false
+          matrix:
+            folder:
+              - frontend
+              - gateway
+              - services/auth-service
+              - services/payment-service
+              - services/product-service
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                dockerfile: ${{ matrix.folder }}/Dockerfile
