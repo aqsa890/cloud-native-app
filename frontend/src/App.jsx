@@ -17,7 +17,7 @@ export default function App() {
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
-      } catch (e) {
+      } catch {
         localStorage.removeItem('auth_user');
       }
     }

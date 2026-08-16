@@ -50,7 +50,7 @@ services:
     build:
       context: ./services/auth-service
       dockerfile: Dockerfile
-    image: cloudnative-micro-auth:v1.0.0
+    image: cloud-app-auth-service:v1.0.0
     container_name: auth-service
     restart: always
     environment:
@@ -76,7 +76,7 @@ services:
     build:
       context: ./services/product-service
       dockerfile: Dockerfile
-    image: cloudnative-micro-product:v1.0.0
+    image: cloud-app-product-service:v1.0.0
     container_name: product-service
     restart: always
     environment:
@@ -101,7 +101,7 @@ services:
     build:
       context: ./services/payment-service
       dockerfile: Dockerfile
-    image: cloudnative-micro-payment:v1.0.0
+    image: cloud-app-payment-service:v1.0.0
     container_name: payment-service
     restart: always
     environment:
@@ -126,7 +126,7 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
-    image: cloudnative-micro-gateway:v1.0.0
+    image: cloud-app-gateway:v1.0.0
     container_name: api-gateway
     restart: always
     environment:
@@ -150,7 +150,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: cloudnative-micro-platform:v1.0.0
+    image: cloud-app:v1.0.0
     container_name: frontend-app
     restart: always
     ports:

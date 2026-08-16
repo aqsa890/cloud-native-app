@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, User, LogOut, ShoppingBag, CreditCard } from 'lucide-react';
+import { User, LogOut, ShoppingBag, CreditCard } from 'lucide-react';
 
 export default function Navbar({ user, onOpenAuth, onLogout, activeTab, setActiveTab }) {
   return (

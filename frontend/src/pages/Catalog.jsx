@@ -14,7 +14,7 @@ export default function Catalog({ onSelectProduct }) {
     try {
       const data = await api.getProducts();
       setProducts(data);
-    } catch (err) {
+    } catch {
       setError('Could not load products from Gateway. Ensure Product Service (port 8002) and Gateway (port 8000) are online.');
     } finally {
       setLoading(false);

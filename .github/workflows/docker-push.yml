@@ -47,4 +47,4 @@ jobs:
           file: ${{ matrix.dockerfile-path }}
           push: true
           tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ matrix.image-name }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image-name }}:${{ github.sha }}

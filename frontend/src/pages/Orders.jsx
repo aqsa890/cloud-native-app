@@ -15,7 +15,7 @@ export default function Orders({ user }) {
     try {
       const data = await api.getUserPayments(user.id);
       setPayments(data);
-    } catch (err) {
+    } catch {
       setError('Could not load payment history from Payment Service.');
     } finally {
       setLoading(false);
