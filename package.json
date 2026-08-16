@@ -6,13 +6,13 @@
     "lint:frontend": "npm run lint --prefix frontend",
     "lint:gateway": "npm run lint --prefix gateway",
     "lint:payment": "npm run lint --prefix services/payment-service",
-    "lint:auth": "cd services/auth-service && go vet ./...",
+    "lint:auth": "cd services/auth-service && CGO_ENABLED=0 go vet ./...",
     "lint:product": "cd services/product-service && pylint app/",
     "lint": "npm run lint:frontend && npm run lint:gateway && npm run lint:payment && npm run lint:auth && npm run lint:product",
     "test:frontend": "npm test --prefix frontend",
     "test:gateway": "npm test --prefix gateway",
     "test:payment": "npm test --prefix services/payment-service",
-    "test:auth": "cd services/auth-service && go test ./...",
+    "test:auth": "cd services/auth-service && CGO_ENABLED=0 go test ./...",
     "test:product": "cd services/product-service && pytest",
     "test": "npm run test:frontend && npm run test:gateway && npm run test:payment && npm run test:auth && npm run test:product"
   }

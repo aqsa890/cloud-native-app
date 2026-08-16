@@ -1,6 +1,10 @@
 pipeline {
     agent { label 'dev' }
 
+    environment {
+        CGO_ENABLED = '0'
+    }
+
     stages {
 
         stage('Cloning Code') {
@@ -14,7 +18,21 @@ pipeline {
             }
         }
 
-        stage('Lint JavaScript') {
+        stage('Gitleaks Scan') {
+            steps {
+                echo 'Running Gitleaks secret scan...'
+
+                sh '''
+                    gitleaks detect \
+                        --source . \
+                --report-format sarif \
+                --report-path gitleaks-report.sarif \
+                --verbose
+        '''
+            }
+        }
+
+        stage('Lint & Test JavaScript') {
             parallel {
 
                 stage('Frontend') {
@@ -23,6 +41,7 @@ pipeline {
                             sh '''
                                 npm install
                                 npm run lint
+                                npm test
                             '''
                         }
                     }
@@ -34,6 +53,7 @@ pipeline {
                             sh '''
                                 npm install
                                 npm run lint
+                                npm test
                             '''
                         }
                     }
@@ -45,6 +65,7 @@ pipeline {
                             sh '''
                                 npm install
                                 npm run lint
+                                npm test
                             '''
                         }
                     }
@@ -52,24 +73,26 @@ pipeline {
             }
         }
 
-        stage('Lint Go') {
+        stage('Lint & Test Go') {
             steps {
                 dir('services/auth-service') {
                     sh '''
                         go mod download
                         go vet ./...
+                        go test ./...
                     '''
                 }
             }
         }
 
-        stage('Lint Python') {
+        stage('Lint & Test Python') {
             steps {
                 dir('services/product-service') {
                     sh '''
                         python3 -m pip install --upgrade pip
                         python3 -m pip install -r requirements.txt
                         PYTHONPATH=. pylint app/
+                        PYTHONPATH=. pytest
                     '''
                 }
             }
