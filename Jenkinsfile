@@ -25,10 +25,10 @@ pipeline {
                 sh '''
                     gitleaks detect \
                         --source . \
-                --report-format sarif \
-                --report-path gitleaks-report.sarif \
-                --verbose
-        '''
+                        --report-format sarif \
+                        --report-path gitleaks-report.sarif \
+                        --verbose
+                '''
             }
         }
 
@@ -102,6 +102,7 @@ pipeline {
 
         stage('SCA Check') {
             parallel {
+
                 stage('Frontend') {
                     steps {
                         dir('frontend') {
@@ -135,13 +136,17 @@ pipeline {
                 stage('Auth Service') {
                     steps {
                         dir('services/auth-service') {
-                            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                            catchError(
+                                buildResult: 'UNSTABLE',
+                                stageResult: 'UNSTABLE'
+                            ) {
                                 sh '''
                                     go install golang.org/x/vuln/cmd/govulncheck@latest
                                     export PATH=$PATH:$(go env GOPATH)/bin
                                     govulncheck -json ./... > govulncheck-report.json
                                 '''
                             }
+
                             sh '''
                                 export PATH=$PATH:$(go env GOPATH)/bin
                                 echo "=== govulncheck summary ==="
@@ -168,6 +173,7 @@ pipeline {
                 }
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
@@ -185,29 +191,34 @@ pipeline {
             }
         }
 
-        stage('Docker Hadolint'){
-            steps{
-                dir('services/auth-service'){
+        stage('Docker Hadolint') {
+            steps {
+
+                dir('services/auth-service') {
                     sh '''
                         docker run --rm -i hadolint/hadolint < Dockerfile
                     '''
                 }
-                dir('services/payment-service'){
+
+                dir('services/payment-service') {
                     sh '''
                         docker run --rm -i hadolint/hadolint < Dockerfile
                     '''
                 }
-                dir('services/product-service'){
+
+                dir('services/product-service') {
                     sh '''
                         docker run --rm -i hadolint/hadolint < Dockerfile
                     '''
                 }
-                dir('gateway'){
+
+                dir('gateway') {
                     sh '''
                         docker run --rm -i hadolint/hadolint < Dockerfile
                     '''
                 }
-                dir('frontend'){
+
+                dir('frontend') {
                     sh '''
                         docker run --rm -i hadolint/hadolint < Dockerfile
                     '''
@@ -215,29 +226,34 @@ pipeline {
             }
         }
 
-        stage('Docker Build'){
-            steps{
-                dir('services/auth-service'){
+        stage('Docker Build') {
+            steps {
+
+                dir('services/auth-service') {
                     sh '''
                         docker build -t cloud-app-auth-service:v1.0.0 .
                     '''
                 }
-                dir('services/payment-service'){
+
+                dir('services/payment-service') {
                     sh '''
                         docker build -t cloud-app-payment-service:v1.0.0 .
                     '''
                 }
-                dir('services/product-service'){
+
+                dir('services/product-service') {
                     sh '''
                         docker build -t cloud-app-product-service:v1.0.0 .
                     '''
                 }
-                dir('gateway'){
+
+                dir('gateway') {
                     sh '''
                         docker build -t cloud-app-gateway:v1.0.0 .
                     '''
                 }
-                dir('frontend'){
+
+                dir('frontend') {
                     sh '''
                         docker build -t cloud-app-frontend:v1.0.0 .
                     '''
@@ -257,8 +273,8 @@ pipeline {
             }
         }
 
-        stage('Pushing Docker Image to Docker Hub'){
-            steps{
+        stage('Pushing Docker Image to Docker Hub') {
+            steps {
                 echo "Pushing image"
 
                 withCredentials([
@@ -267,9 +283,10 @@ pipeline {
                         passwordVariable: "dockerHubPass",
                         usernameVariable: "dockerHubUser"
                     )
-                ]){
+                ]) {
                     sh '''
-                        docker login -u $dockerHubUser -p $dockerHubPass
+                        docker login -u "$dockerHubUser" -p "$dockerHubPass"
+
                         docker image tag cloud-app-frontend:v1.0.0 $dockerHubUser/cloud-app-frontend:v1.0.0
                         docker image tag cloud-app-gateway:v1.0.0 $dockerHubUser/cloud-app-gateway:v1.0.0
                         docker image tag cloud-app-product-service:v1.0.0 $dockerHubUser/cloud-app-product-service:v1.0.0
@@ -282,12 +299,12 @@ pipeline {
                         docker push $dockerHubUser/cloud-app-payment-service:v1.0.0
                         docker push $dockerHubUser/cloud-app-auth-service:v1.0.0
                     '''
-                }               
+                }
             }
         }
 
-        stage('Deployment Stage'){
-            steps{
+        stage('Deployment Stage') {
+            steps {
                 sh '''
                     # Ensure .env exists
                     if [ ! -f .env ]; then
@@ -303,9 +320,9 @@ pipeline {
                 '''
             }
         }
+    }
 
-        post {
-
+    post {
         success {
             script {
                 emailext(
@@ -313,28 +330,27 @@ pipeline {
                     to: 'rkkhan0750@gmail.com',
                     subject: "SUCCESS: Cloud Native App CI/CD Pipeline - Build #${BUILD_NUMBER}",
                     body: """
-                            Hello,
+                        Hello,
 
-                            The Cloud Native App CI/CD pipeline has completed successfully.
+                        The Cloud Native App CI/CD pipeline has completed successfully.
 
-                            Build Details:
-                            ------------------------------
-                            Project     : Cloud Native App
-                            Build No.   : #${BUILD_NUMBER}
-                            Status      : SUCCESS
-                            Branch      : ${env.GIT_BRANCH}
-                            Commit      : ${env.GIT_COMMIT}
-                            Job         : ${env.JOB_NAME}
-                            Build URL   : ${env.BUILD_URL}
+                        Build Details:
+                        ------------------------------
+                        Project     : Cloud Native App
+                        Build No.   : #${BUILD_NUMBER}
+                        Status      : SUCCESS
+                        Branch      : ${env.GIT_BRANCH}
+                        Commit      : ${env.GIT_COMMIT}
+                        Job         : ${env.JOB_NAME}
+                        Build URL   : ${env.BUILD_URL}
 
-                            The application was successfully built, tested, pushed to Docker Hub,
-                            and deployed successfully.
+                        The application was successfully built, tested, pushed to Docker Hub,
+                        and deployed successfully.
 
-                            Regards,
-                            Jenkins CI/CD Pipeline
-                            """.stripIndent()
-                     )
-                 }
+                        Regards,
+                        Jenkins CI/CD Pipeline
+                    """.stripIndent()
+                )
             }
         }
     }
