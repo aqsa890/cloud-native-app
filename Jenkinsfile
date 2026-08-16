@@ -244,5 +244,34 @@ pipeline {
                 }
             }
         }
+
+        stage('Pushing Docker Image to Docker Hub'){
+            steps{
+                echo "Pushing image"
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "dockerHubCreds",
+                        passwordVariable: "dockerHubPass",
+                        usernameVariable: "dockerHubUser"
+                    )
+                ]){
+                    sh '''
+                        docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}
+                        docker image tag cloud-app-frontend:v1.0.0 ${env.dockerHubUser}/cloud-app-frontend:v1.0.0
+                        docker image tag cloud-app-gateway:v1.0.0 ${env.dockerHubUser}/cloud-app-gateway:v1.0.0
+                        docker image tag cloud-app-product-service:v1.0.0 ${env.dockerHubUser}/cloud-app-product-service:v1.0.0
+                        docker image tag cloud-app-payment-service:v1.0.0 ${env.dockerHubUser}/cloud-app-payment-service:v1.0.0
+                        docker image tag cloud-app-auth-service:v1.0.0 ${env.dockerHubUser}/cloud-app-auth-service:v1.0.0
+
+                        docker push ${env.dockerHubUser}/cloud-app-frontend:v1.0.0
+                        docker push ${env.dockerHubUser}/cloud-app-gateway:v1.0.0
+                        docker push ${env.dockerHubUser}/cloud-app-product-service:v1.0.0
+                        docker push ${env.dockerHubUser}/cloud-app-payment-service:v1.0.0
+                        docker push ${env.dockerHubUser}/cloud-app-auth-service:v1.0.0
+                    '''
+                }               
+            }
+        }
     }
 }
