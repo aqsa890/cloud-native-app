@@ -214,5 +214,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Build'){
+            steps{
+                dir('services/auth-service'){
+                    sh '''
+                        docker build -t cloud-app-auth-service:v1.0.0 .
+                    '''
+                }
+                dir('services/payment-service'){
+                    sh '''
+                        docker build -t cloud-app-payment-service:v1.0.0 .
+                    '''
+                }
+                dir('services/product-service'){
+                    sh '''
+                        docker build -t cloud-app-product-service:v1.0.0 .
+                    '''
+                }
+                dir('gateway'){
+                    sh '''
+                        docker build -t cloud-app-gateway:v1.0.0 .
+                    '''
+                }
+                dir('frontend'){
+                    sh '''
+                        docker build -t cloud-app-frontend:v1.0.0 .
+                    '''
+                }
+            }
+        }
     }
 }
